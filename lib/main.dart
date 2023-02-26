@@ -24,7 +24,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-  Map<String, Map<String, dynamic>> _groupedData = <String, Map<String, dynamic>>{};
+  Map<String, Map<String, dynamic>> _groupedData = <String,
+      Map<String, dynamic>>{};
 
   @override
   void initState() {
@@ -46,7 +47,17 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _groupData(Map<String, dynamic> deviceData) {
-    final List<String> categories = <String>[      'Version',      'Build',      'Display',      'Hardware',      'Manufacturer',      'Device',      'Product',      'Abis',      'Display Metrics',    ];
+    final List<String> categories = <String>[
+      'Version',
+      'Build',
+      'Display',
+      'Hardware',
+      'Manufacturer',
+      'Device',
+      'Product',
+      'Abis',
+      'Display Metrics',
+    ];
 
     final Map<String, Map<String, dynamic>> groupedData =
     <String, Map<String, dynamic>>{};
@@ -62,9 +73,12 @@ class _MyAppState extends State<MyApp> {
         groupedData['Build']![key] = deviceData[key];
       } else if (key.startsWith('display.')) {
         groupedData['Display']![key] = deviceData[key];
-      } else if (key == 'hardware' || key == 'manufacturer' || key == 'device' || key == 'product') {
+      } else
+      if (key == 'hardware' || key == 'manufacturer' || key == 'device' ||
+          key == 'product') {
         groupedData['Hardware']![key] = deviceData[key];
-      } else if (key == 'supportedAbis' || key == 'supported32BitAbis' || key == 'supported64BitAbis') {
+      } else if (key == 'supportedAbis' || key == 'supported32BitAbis' ||
+          key == 'supported64BitAbis') {
         groupedData['Abis']![key] = deviceData[key];
       } else if (key.startsWith('displayMetrics.')) {
         groupedData['Display Metrics']![key] = deviceData[key];
@@ -76,36 +90,54 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
+          centerTitle: true, // Align title to the middle
+          backgroundColor: Colors.black, // Change background to black
           title: Text(
               'Android Device Info'
           ),
         ),
-        body: ListView.builder(
-          itemCount: _groupedData.keys.length,
-          itemBuilder: (BuildContext context, int index) {
-            final category = _groupedData.keys.elementAt(index);
-            final data = _groupedData[category]!;
-
-            return ExpansionTile(
-              title: Text(category),
-              children: data.keys.map((property) {
-                return ListTile(
-                  title: Text(property),
-                  subtitle: Text('${data[property]}'),
-                );
-              }).toList(),
-            );
-          },
+        body: Column(
+          children: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Image.asset(
+                  'asset/gear.png',
+                  height: 50,
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _groupedData.keys.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final category = _groupedData.keys.elementAt(index);
+                  final data = _groupedData[category]!;
+                  return ExpansionTile(
+                    title: Text(category),
+                    children: data.keys.map((property) {
+                      return ListTile(
+                        title: Text(property),
+                        subtitle: Text('${data[property]}'),
+                      );
+                    }).toList(),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
-}
+
+
 
   Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
     return <String, dynamic>{
@@ -147,3 +179,4 @@ class _MyAppState extends State<MyApp> {
     };
   }
 
+}
